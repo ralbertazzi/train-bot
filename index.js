@@ -30,7 +30,7 @@ function filterSolutionsByPrice(solutions, maxPrice)
 
 function parseInputDate(input_date)
 {
-    return moment(input_date, ['DD/MM/YYYY', 'DD/MM'], true)
+    return moment(input_date, ['D/M/YYYY', 'D/M'], true)
 }
 
 function parseFilter(arg)
