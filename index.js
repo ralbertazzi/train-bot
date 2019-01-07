@@ -30,16 +30,7 @@ function filterSolutionsByPrice(solutions, maxPrice)
 
 function parseInputDate(input_date)
 {
-    if (moment(input_date, 'DD/MM/YYYY', true).isValid())
-        return input_date
-    else
-    {
-        let date_wo_year = moment(input_date, 'DD/MM', true)
-        if (date_wo_year.isValid())
-            return date_wo_year.format('DD/MM/YYYY')
-        else
-            return null
-    }
+    return moment(input_date, ['DD/MM/YYYY', 'DD/MM'], true)
 }
 
 function parseFilter(arg)
@@ -66,13 +57,9 @@ function parseFilter(arg)
     }
 }
 
-const bot = new Telegraf(process.env.BOT_TOKEN)
-bot.start((ctx) => ctx.reply('Welcome!'))
-bot.help((ctx) => ctx.reply('Usage: /MIBO DD/MM[/YYYY] [p24] [t70]'))
-bot.command('MIBO', async (ctx) => {
-
+async function getAllSolutions(ctx, startStation, endStation)
+{
     console.log(ctx.message.text)
-
     let args = ctx.message.text.split(' ')
 
     let date = parseInputDate(args[1])
@@ -81,9 +68,9 @@ bot.command('MIBO', async (ctx) => {
         for (let i = 2; i < args.length; i++)
             filters.push(parseFilter(args[i]))
 
-    if (date)
+    if (date.isValid())
     {
-        let solutions = await getTrenitaliaSolutions(date)
+        let solutions = await getTrenitaliaSolutions(startStation, endStation, date)
         for (let filter of filters)
             if (filter.value)
                 solutions = filter.func(solutions, filter.value)
@@ -93,9 +80,12 @@ bot.command('MIBO', async (ctx) => {
         else
             ctx.reply('No solution 😔')
     }
-    else ctx.reply('Missing date 😱 Check /help')
-    
+    else ctx.reply('Missing or bad formatted date 😱 Check /help')
+}
 
-
-})
+const bot = new Telegraf(process.env.BOT_TOKEN)
+bot.start((ctx) => ctx.reply('Welcome!'))
+bot.help((ctx) => ctx.reply('Usage: /MIBO DD/MM[/YYYY] [p24] [t70]'))
+bot.command('MIBO', async (ctx) => await getAllSolutions(ctx, "MILANO CENTRALE", "BOLOGNA CENTRALE"))
+bot.command('BOMI', async (ctx) => await getAllSolutions(ctx, "BOLOGNA CENTRALE", "MILANO CENTRALE"))
 bot.startPolling()

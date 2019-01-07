@@ -95,9 +95,10 @@ function getSolutions(partenza, arrivo, data, ora) {
     });
 }
 
-async function getTrenitaliaSolutions(date)
+async function getTrenitaliaSolutions(startStation, endStation, date)
 {
-    let solutions = await Promise.all(range(6, 24).map(n => getSolutions("MILANO CENTRALE", "BOLOGNA CENTRALE", date, n)))
+    date = date.format('DD/MM/YYYY')
+    let solutions = await Promise.all(range(6, 24).map(n => getSolutions(startStation, endStation, date, n)))
     solutions = [].concat.apply([], solutions)
     return solutions.filter(s => s != null)
 }
