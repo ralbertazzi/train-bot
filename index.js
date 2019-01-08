@@ -22,9 +22,14 @@ function solutionToString(sol)
         return moment.utc(moment_duration.as('ms')).format('HH:mm')
     }
 
+    function formatPrice(price)
+    {
+        return price.toString().padStart(5)
+    }
+
     let duration = formatDuration(getDuration(sol))
 
-    return `${getTime(sol.departuretime)} -> ${getTime(sol.arrivaltime)} (${duration}) - ${sol.price}€ - ${sol.company}`
+    return `${getTime(sol.departuretime)} -> ${getTime(sol.arrivaltime)} (${duration})  - ${formatPrice(sol.price)}€  -  ${sol.company}`
 }
 
 function filterSolutionsByDuration(solutions, maxDurationInMinutes)
