@@ -84,7 +84,7 @@ async function getSolutions(partenza, arrivo, data, ora) {
         let details = await Promise.all(solutions.map(s => getMinPrice(s.idsolution, cookieJar)));
         return zip(solutions, details).map(data => {
             const solution = data[0], offer = data[1];
-            return new Solution(solution.departuretime, solution.arrivaltime, 'TRENITALIA', offer.name, offer.price)
+            return new Solution(solution.departuretime, solution.arrivaltime, 'TRNTL', offer.name, offer.price)
         })
     }
     catch (err) {
