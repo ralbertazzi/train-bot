@@ -1,5 +1,6 @@
 const rp = require('request-promise-native')
 const moment = require('moment')
+const Solution = require('./solution')
 
 // See API usage: https://github.com/SimoDax/RapidoTreno/blob/master/src/ItaloApiRequest.cpp
 
@@ -52,13 +53,7 @@ function buildSolution(journey)
         return  moment(d, 'xZ', true)
     }
 
-    return {
-        departuretime: parseDate(journey.STD),
-        arrivaltime: parseDate(journey.STA),
-        offer: offer_name,
-        price: min_price,
-        company: 'ITALO'
-    }
+    return new Solution(parseDate(journey.STD), parseDate(journey.STA), 'ITALO', offer_name, min_price)
 }
 
 async function apiCall(startItaloCode, endItaloCode, date)

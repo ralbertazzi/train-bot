@@ -1,6 +1,7 @@
 const request = require('request')
 const rp = require('request-promise-native')
 const moment = require('moment')
+const Solution = require('./solution')
 
 /**
  * See Api usage:
@@ -83,13 +84,7 @@ async function getSolutions(partenza, arrivo, data, ora) {
         let details = await Promise.all(solutions.map(s => getMinPrice(s.idsolution, cookieJar)));
         return zip(solutions, details).map(data => {
             const solution = data[0], offer = data[1];
-            return {
-                arrivaltime: solution.arrivaltime,
-                departuretime: solution.departuretime,
-                offer: offer.name,
-                price: offer.price,
-                company: 'TRENITALIA'
-            }
+            return new Solution(solution.departuretime, solution.arrivaltime, 'TRENITALIA', offer.name, offer.price)
         })
     }
     catch (err) {
