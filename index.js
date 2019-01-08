@@ -114,4 +114,19 @@ bot.start((ctx) => ctx.reply('Welcome!'))
 bot.help((ctx) => ctx.reply('Usage: /MIBO DD/MM[/YYYY] [p24] [t70]'))
 bot.command('MIBO', async (ctx) => await getAllSolutions(ctx, "MILANO CENTRALE", "BOLOGNA CENTRALE"))
 bot.command('BOMI', async (ctx) => await getAllSolutions(ctx, "BOLOGNA CENTRALE", "MILANO CENTRALE"))
-bot.startPolling()
+
+
+if (process.env.NODE_ENV === 'production')
+{
+    console.log('Starting bot in WebHook mode')
+
+    const PORT = process.env.PORT || 3000;
+    bot.telegram.setWebhook(`${process.env.DEPLOY_URL}/bot${process.env.BOT_TOKEN}`);
+    bot.startWebhook(`/bot${process.env.BOT_TOKEN}`, null, PORT)
+
+}
+else
+{
+    console.log('Starting bot in polling mode')
+    bot.startPolling()
+}
