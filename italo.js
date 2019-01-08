@@ -53,7 +53,7 @@ function buildSolution(journey)
         return  moment(d, 'xZ', true)
     }
 
-    return new Solution(parseDate(journey.STD), parseDate(journey.STA), 'ITALO', offer_name, min_price)
+    return new Solution(parseDate(journey.STD), parseDate(journey.STA), 'ITL', offer_name, min_price)
 }
 
 async function apiCall(startItaloCode, endItaloCode, date)
