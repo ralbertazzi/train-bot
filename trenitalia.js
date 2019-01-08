@@ -2,6 +2,12 @@ const request = require('request')
 const rp = require('request-promise-native')
 const moment = require('moment')
 
+/**
+ * See Api usage:
+ *  https://github.com/SimoDax/Trenitalia-API/wiki/API-Trenitalia---lefrecce.it
+ *  https://github.com/TrinTragula/api-trenitalia
+ */ 
+
 const apiUrl = "https://www.lefrecce.it/msite/api/"
 
 const range = (start, end) => Array.from({length: (end - start)}, (_, k) => k + start)
@@ -43,56 +49,52 @@ function getMinPrice(idsolution, cookieJar)
             return null
     })
     .catch(err => {
-        return null;
+        return null
     })
 }
 
-function getSolutions(partenza, arrivo, data, ora) {
+async function getSolutions(partenza, arrivo, data, ora) {
 
     const cookieJar = request.jar()
 
-    return rp({
-        uri: apiUrl + "solutions",
-        jar: cookieJar,
-        qs: {
-            origin: partenza,
-            destination: arrivo,
-            adate: data,
-            atime: ora.toString(),
-            adultno: 1,
-            childno: 0,
-            arflag: "A",
-            direction: "A",
-            frecce: "true",
-            onlyRegional: "false",
-        }
-    })
-    .then(async body => {
-        let solutions = JSON.parse(body)
-        
+    try {
+        const body = await rp({
+            uri: apiUrl + "solutions",
+            jar: cookieJar,
+            qs: {
+                origin: partenza,
+                destination: arrivo,
+                adate: data,
+                atime: ora.toString(),
+                adultno: 1,
+                childno: 0,
+                arflag: "A",
+                direction: "A",
+                frecce: "true",
+                onlyRegional: "false",
+            }
+        });
+        let solutions = JSON.parse(body);
         solutions.forEach(solution => {
-            solution.departuretime = moment(solution.departuretime, 'x')
-            solution.arrivaltime = moment(solution.arrivaltime, 'x')
-        })
-
-        solutions = solutions.filter(solution => solution.departuretime.hour() == ora)
-
-        let details = await Promise.all(solutions.map(s => getMinPrice(s.idsolution, cookieJar)))
-
+            solution.departuretime = moment(solution.departuretime, 'x');
+            solution.arrivaltime = moment(solution.arrivaltime, 'x');
+        });
+        solutions = solutions.filter(solution => solution.departuretime.hour() == ora);
+        let details = await Promise.all(solutions.map(s => getMinPrice(s.idsolution, cookieJar)));
         return zip(solutions, details).map(data => {
-            const solution = data[0], offer = data[1]
+            const solution = data[0], offer = data[1];
             return {
                 arrivaltime: solution.arrivaltime,
                 departuretime: solution.departuretime,
                 offer: offer.name,
                 price: offer.price,
-                duration: solution.duration
+                company: 'TRENITALIA'
             }
         })
-    })
-    .catch(err => {
+    }
+    catch (err) {
         return null;
-    });
+    }
 }
 
 async function getTrenitaliaSolutions(startStation, endStation, date)

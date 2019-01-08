@@ -2,6 +2,7 @@ require('dotenv').config()
 const Telegraf = require('telegraf')
 const moment = require('moment')
 const getTrenitaliaSolutions = require('./trenitalia')
+const getItaloSolutions = require('./italo')
 
 function getDuration(sol)
 {
@@ -15,7 +16,15 @@ function solutionToString(sol)
         return moment_date.format('HH:mm')
     }
 
-    return `${getTime(sol.departuretime)} -> ${getTime(sol.arrivaltime)} (${sol.duration}) - ${sol.price}€`
+    function formatDuration(moment_duration)
+    {
+        // https://stackoverflow.com/questions/13262621/how-do-i-use-format-on-a-moment-js-duration
+        return moment.utc(moment_duration.as('ms')).format('HH:mm')
+    }
+
+    let duration = formatDuration(getDuration(sol))
+
+    return `${getTime(sol.departuretime)} -> ${getTime(sol.arrivaltime)} (${duration}) - ${sol.price}€ - ${sol.company}`
 }
 
 function filterSolutionsByDuration(solutions, maxDurationInMinutes)
@@ -57,6 +66,11 @@ function parseFilter(arg)
     }
 }
 
+function sortSolutionsByDepartureTime(solutions)
+{
+    solutions.sort((s1, s2) => s1.departuretime.diff(s2.departuretime))
+}
+
 async function getAllSolutions(ctx, startStation, endStation)
 {
     console.log(ctx.message.text)
@@ -70,7 +84,14 @@ async function getAllSolutions(ctx, startStation, endStation)
 
     if (date.isValid())
     {
-        let solutions = await getTrenitaliaSolutions(startStation, endStation, date)
+        let solutions = await Promise.all([
+            getTrenitaliaSolutions(startStation, endStation, date),
+            getItaloSolutions(startStation, endStation, date)
+        ])
+
+        solutions = [].concat.apply([], solutions)
+        sortSolutionsByDepartureTime(solutions)
+
         for (let filter of filters)
             if (filter.value)
                 solutions = filter.func(solutions, filter.value)
