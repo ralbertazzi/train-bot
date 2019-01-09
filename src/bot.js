@@ -53,7 +53,7 @@ function getTitle(ctx)
 {
     let { startStation, endStation, date, filters } = ctx.session
 
-    let title = `\`${date.format('DD/MM/YYYY')} | ${startStation} -> ${endStation}`
+    let title = `\`${date.format('ddd DD/MM/YYYY')} | ${startStation} -> ${endStation}`
 
     if (filters.length > 0)
         title += ' | ' + filters.map(f => f.toString()).join(' ')
@@ -149,7 +149,6 @@ function startBot()
     bot.action('previousDay', async (ctx) => await prevNextDay(ctx, 'prev'))
     bot.action('nextDay', async (ctx) => await prevNextDay(ctx, 'next'))
     bot.action('invert', async (ctx) => await invertStations(ctx))
-    bot.command('md', (ctx) => ctx.replyWithMarkdown(`Send \`hi\``))
 
     if (process.env.NODE_ENV === 'production')
     {
