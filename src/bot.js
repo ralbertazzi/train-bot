@@ -101,10 +101,10 @@ async function getSingleDaySolutions(ctx, startStation, endStation, date, filter
     if (solutions.length > 0)
     {
         let replyMessage = solutions.map(s => s.toString()).join('\n')
-        ctx.replyWithMarkdown(getTitle(ctx) + replyMessage, getReplyButtons())
+        await ctx.replyWithMarkdown(getTitle(ctx) + replyMessage, getReplyButtons())
     }    
     else
-        ctx.replyWithMarkdown(getTitle(ctx) + 'No solution 😔', getReplyButtons())
+        await ctx.replyWithMarkdown(getTitle(ctx) + 'No solution 😔', getReplyButtons())
 }
 
 
@@ -123,7 +123,7 @@ async function getMultipleDaysSolutions(ctx, startStation, endStation, date, fil
         filename += '_' + filters.map(f => f.toString()).join('_')
     filename += '.pdf'
 
-    ctx.replyWithDocument({ source: pdfDoc, filename: filename})
+    await ctx.replyWithDocument({ source: pdfDoc, filename: filename})
 }
 
 async function parseAndAnswer(ctx, startStation, endStation)
@@ -134,7 +134,7 @@ async function parseAndAnswer(ctx, startStation, endStation)
     let date = parseInputDate(args[1])
     if (!date.isValid())
     {
-        ctx.reply('Missing or bad formatted date 😱 Check /help')
+        await ctx.reply('Missing or bad formatted date 😱 Check /help')
         return
     }
 
@@ -183,12 +183,12 @@ async function invertStations(ctx)
     {
         await getSingleDaySolutions(ctx, session.endStation, session.startStation, session.date, session.filters)
     }
-    else noSessionMessage(ctx)
+    else await noSessionMessage(ctx)
 }
 
-function noSessionMessage(ctx)
+async function noSessionMessage(ctx)
 {
-    ctx.reply('No session found. Please manually search for something.')
+    await ctx.reply('No session found. Please manually search for something.')
 }
 
 function startBot()
