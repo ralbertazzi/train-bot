@@ -4,6 +4,8 @@ const moment = require('moment')
 const getTrenitaliaSolutions = require('./trenitalia')
 const getItaloSolutions = require('./italo')
 const { FilterSolutionsByDuration, FilterSolutionsByPrice } = require('./filters')
+const solutionsToPdf = require('./pdf')
+const { range } = require('./utils')
 
 
 function parseInputDate(input_date)
@@ -11,17 +13,17 @@ function parseInputDate(input_date)
     return moment(input_date, ['D/M/YYYY', 'D/M'], true)
 }
 
+function parseIntParam(arg)
+{
+    if (arg.length == 1) 
+        return null
+
+    let param = parseInt(arg.substring(1))
+    return isNaN(param) ? null : param
+}
+
 function parseFilter(arg)
 {
-    function parseIntParam(arg)
-    {
-        if (arg.length == 1) 
-            return null
-
-        let param = parseInt(arg.substring(1))
-        return isNaN(param) ? null : param
-    }
-
     switch(arg.charAt(0))
     {
         case FilterSolutionsByDuration.initial():
@@ -33,6 +35,19 @@ function parseFilter(arg)
         default:
             return null
     }
+}
+
+function parseSearchDays(args)
+{
+    for (let arg of args)
+        if (arg.charAt(0) == 'd')
+        {
+            let search_days = parseIntParam(arg)
+            if (search_days != null && search_days >= 0)
+                return search_days
+        }
+
+    return 0
 }
 
 function sortSolutionsByDepartureTime(solutions)
@@ -61,32 +76,54 @@ function getTitle(ctx)
     return title + '\`\n\n'
 }
 
-async function getAllSolutions(ctx, startStation, endStation, date, filters)
+async function getTrenitaliaAndItaloSolutions(startStation, endStation, date, filters)
 {
-    if (date.isValid())
+    let solutions = await Promise.all([
+        getTrenitaliaSolutions(startStation, endStation, date),
+        getItaloSolutions(startStation, endStation, date)
+    ])
+
+    solutions = [].concat.apply([], solutions)
+    sortSolutionsByDepartureTime(solutions)
+
+    for (let filter of filters)
+        solutions = filter.doFilter(solutions)
+
+    return solutions
+}
+
+async function getSingleDaySolutions(ctx, startStation, endStation, date, filters)
+{
+    ctx.session = { startStation, endStation, date, filters }
+
+    let solutions = await getTrenitaliaAndItaloSolutions(startStation, endStation, date, filters)
+
+    if (solutions.length > 0)
     {
-        ctx.session = { startStation, endStation, date, filters }
+        let replyMessage = solutions.map(s => s.toString()).join('\n')
+        ctx.replyWithMarkdown(getTitle(ctx) + replyMessage, getReplyButtons())
+    }    
+    else
+        ctx.replyWithMarkdown(getTitle(ctx) + 'No solution 😔', getReplyButtons())
+}
 
-        let solutions = await Promise.all([
-            getTrenitaliaSolutions(startStation, endStation, date),
-            getItaloSolutions(startStation, endStation, date)
-        ])
 
-        solutions = [].concat.apply([], solutions)
-        sortSolutionsByDepartureTime(solutions)
+async function getMultipleDaysSolutions(ctx, startStation, endStation, date, filters, offset)
+{
+    let days = range(-offset, offset + 1).map(off =>  date.clone().add(off, 'days'))
 
-        for (let filter of filters)
-            solutions = filter.doFilter(solutions)
-    
-        if (solutions.length > 0)
-        {
-            let replyMessage = solutions.map(s => s.toString()).join('\n')
-            ctx.replyWithMarkdown(getTitle(ctx) + replyMessage, getReplyButtons())
-        }    
-        else
-            ctx.replyWithMarkdown(getTitle(ctx) + 'No solution 😔', getReplyButtons())
-    }
-    else ctx.reply('Missing or bad formatted date 😱 Check /help')
+    let all_days_solutions = await Promise.all(days.map(offset_date =>
+        getTrenitaliaAndItaloSolutions(startStation, endStation, offset_date, filters)
+    ))
+
+    let pdfDoc = solutionsToPdf(startStation, endStation, days, all_days_solutions)
+
+    let filename = `trains_${days[0].format('DD-MM')}_to_${days[days.length - 1].format('DD-MM')}`
+    if (filters.length > 0)
+        filename += '_' + filters.map(f => f.toString()).join('_')
+    filename += '.pdf'
+
+    ctx.replyWithDocument({ source: pdfDoc, filename: filename})
 }
 
 async function parseAndAnswer(ctx, startStation, endStation)
@@ -95,6 +132,12 @@ async function parseAndAnswer(ctx, startStation, endStation)
     let args = ctx.message.text.split(' ')
 
     let date = parseInputDate(args[1])
+    if (!date.isValid())
+    {
+        ctx.reply('Missing or bad formatted date 😱 Check /help')
+        return
+    }
+
     let filters = []
     if (args.length > 2)
         for (let i = 2; i < args.length; i++)
@@ -104,7 +147,17 @@ async function parseAndAnswer(ctx, startStation, endStation)
                 filters.push(filter)
         }
 
-    await getAllSolutions(ctx, startStation, endStation, date, filters)
+    let days = parseSearchDays(args)
+    if (days == 0)
+    {
+        await getSingleDaySolutions(ctx, startStation, endStation, date, filters)
+    }
+    else
+    {
+        await getMultipleDaysSolutions(ctx, startStation, endStation, date, filters, days)
+    }
+
+    
 }
 
 async function prevNextDay(ctx, action)
@@ -118,7 +171,7 @@ async function prevNextDay(ctx, action)
         else if (action === 'next')
             newDate.add(1, 'day')
 
-        await getAllSolutions(ctx, session.startStation, session.endStation, newDate, session.filters)
+        await getSingleDaySolutions(ctx, session.startStation, session.endStation, newDate, session.filters)
     }
     else noSessionMessage(ctx)
 }
@@ -128,7 +181,7 @@ async function invertStations(ctx)
     let session = ctx.session
     if (session.startStation)
     {
-        await getAllSolutions(ctx, session.endStation, session.startStation, session.date, session.filters)
+        await getSingleDaySolutions(ctx, session.endStation, session.startStation, session.date, session.filters)
     }
     else noSessionMessage(ctx)
 }

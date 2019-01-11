@@ -12,6 +12,7 @@
   "dependencies": {
     "dotenv": "^6.2.0",
     "moment": "^2.23.0",
+    "pdfmake": "^0.1.40",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
     "telegraf": "^3.25.5"

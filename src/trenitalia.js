@@ -2,6 +2,7 @@ const request = require('request')
 const rp = require('request-promise-native')
 const moment = require('moment')
 const Solution = require('./solution')
+const { range, zip } = require('./utils')
 
 /**
  * See Api usage:
@@ -10,11 +11,6 @@ const Solution = require('./solution')
  */ 
 
 const apiUrl = "https://www.lefrecce.it/msite/api/"
-
-const range = (start, end) => Array.from({length: (end - start)}, (_, k) => k + start)
-
-// https://stackoverflow.com/questions/4856717/javascript-equivalent-of-pythons-zip-function
-const zip = (...rows) => [...rows[0]].map((_,c) => rows.map(row => row[c]))
 
 function getMinPrice(idsolution, cookieJar)
 {

@@ -33,9 +33,24 @@ class Solution {
         return price.toString().padStart(5)
     }
 
+    getDay()
+    {
+        return this.departuretime.format('ddd DD/MM')
+    }
+
+    formattedPrice()
+    {
+        return this._formatPrice(this.price)
+    }
+
+    tableKey()
+    {
+        return `${this._formatTime(this.departuretime)} -> ${this._formatTime(this.arrivaltime)} (${this._formatDuration(this.duration())}) ${this.company}`
+    }
+
     toString()
     {
-        return `${this._formatTime(this.departuretime)} -> ${this._formatTime(this.arrivaltime)} (${this._formatDuration(this.duration())})  - ${this._formatPrice(this.price)}€  -  ${this.company}`
+        return `${this._formatTime(this.departuretime)} -> ${this._formatTime(this.arrivaltime)} (${this._formatDuration(this.duration())})  - ${this.formattedPrice()}€  -  ${this.company}`
     }
 }
 
