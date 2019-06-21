@@ -52,6 +52,19 @@ class Solution {
     {
         return `${this._formatTime(this.departuretime)} -> ${this._formatTime(this.arrivaltime)} (${this._formatDuration(this.duration())})  - ${this.formattedPrice()}€  -  ${this.company}`
     }
+
+    toJson()
+    {
+        return {
+            "date": this.departuretime.format('DD/MM/YYYY'),
+            "departureTime": this._formatTime(this.departuretime),
+            "arrivalTime": this._formatTime(this.arrivaltime),
+            "duration": this._formatDuration(this.duration()),
+            "price": this.price,
+            "offer": this.offer,
+            "company": this.company
+        }
+    }
 }
 
 module.exports = Solution
