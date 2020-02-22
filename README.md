@@ -13,3 +13,9 @@ Available routes:
 - `mibo`: MILANO CENTRALE -> BOLOGNA CENTRALE
 - `vmmi`: VENEZIA MESTRE -> MILANO CENTRALE
 - `mivm`: VENEZIA MESTRE -> MILANO CENTRALE
+
+
+## Development
+
+Project is deployed on Google Cloud Run.
+To set the Telegram Webhook use [this simple API call](https://medium.com/@xabaras/setting-your-telegram-bot-webhook-the-easy-way-c7577b2d6f72)
