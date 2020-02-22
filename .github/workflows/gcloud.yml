@@ -7,8 +7,8 @@ jobs:
     name: 'Deploy to GCP'
     runs-on: ubuntu-latest
     env:
-      APPLICATION_NAME: train-bot
-      PROJECT_ID: train-bot-42
+      APPLICATION_NAME: trains-bot
+      PROJECT_ID: trains-bot-42
     steps:
     - uses: actions/checkout@v1
     - name: 'docker: build image'
