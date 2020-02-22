@@ -210,7 +210,6 @@ async function startBot()
         console.log('Starting bot in WebHook mode')
 
         const PORT = process.env.PORT || 3000;
-        await bot.telegram.setWebhook(`${process.env.DEPLOY_URL}/bot`);
         bot.startWebhook(`/bot`, null, PORT)
     }
     else
