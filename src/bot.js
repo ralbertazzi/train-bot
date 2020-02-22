@@ -191,7 +191,7 @@ async function noSessionMessage(ctx)
     await ctx.reply('No session found. Please manually search for something.')
 }
 
-function startBot()
+async function startBot()
 {
     const bot = new Telegraf(process.env.BOT_TOKEN)
     bot.use(session())
@@ -210,9 +210,8 @@ function startBot()
         console.log('Starting bot in WebHook mode')
 
         const PORT = process.env.PORT || 3000;
-        bot.telegram.setWebhook(`${process.env.DEPLOY_URL}/bot${process.env.BOT_TOKEN}`);
-        bot.startWebhook(`/bot${process.env.BOT_TOKEN}`, null, PORT)
-
+        await bot.telegram.setWebhook(`${process.env.DEPLOY_URL}/bot`);
+        bot.startWebhook(`/bot`, null, PORT)
     }
     else
     {
