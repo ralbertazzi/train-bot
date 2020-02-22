@@ -210,7 +210,7 @@ async function startBot()
         console.log('Starting bot in WebHook mode')
 
         const PORT = process.env.PORT || 3000;
-        bot.startWebhook(`/bot`, null, PORT)
+        bot.startWebhook(`/bot`, null, PORT, "0.0.0.0")
     }
     else
     {
