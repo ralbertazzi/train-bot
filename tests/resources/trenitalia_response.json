@@ -1,0 +1,142 @@
+[
+    {
+        "idsolution": "c645d5337871e6a1193f79a74bb9da87i0",
+        "origin": "Bologna Centrale",
+        "destination": "Milano Centrale",
+        "direction": "A",
+        "departuretime": 1643120280000,
+        "arrivaltime": 1643126040000,
+        "minprice": 36.9,
+        "optionaltext": null,
+        "duration": "01:36",
+        "changesno": 0,
+        "bookable": true,
+        "saleable": true,
+        "trainlist": [
+            {
+                "trainidentifier": "FRECCIAROSSA 8818",
+                "trainacronym": "FR",
+                "traintype": "F",
+                "pricetype": "D"
+            }
+        ],
+        "onlycustom": false,
+        "extraInfo": [],
+        "showSeat": true,
+        "specialOffer": null,
+        "transportMeasureList": [],
+        "originalPrice": 36.9
+    },
+    {
+        "idsolution": "c645d5337871e6a1193f79a74bb9da87i1",
+        "origin": "Bologna Centrale",
+        "destination": "Milano Centrale",
+        "direction": "A",
+        "departuretime": 1643121360000,
+        "arrivaltime": 1643125800000,
+        "minprice": 36.9,
+        "optionaltext": null,
+        "duration": "01:14",
+        "changesno": 0,
+        "bookable": true,
+        "saleable": true,
+        "trainlist": [
+            {
+                "trainidentifier": "FRECCIAROSSA 9584",
+                "trainacronym": "FR",
+                "traintype": "F",
+                "pricetype": "D"
+            }
+        ],
+        "onlycustom": false,
+        "extraInfo": [],
+        "showSeat": true,
+        "specialOffer": null,
+        "transportMeasureList": [],
+        "originalPrice": 36.9
+    },
+    {
+        "idsolution": "c645d5337871e6a1193f79a74bb9da87i2",
+        "origin": "Bologna Centrale",
+        "destination": "Milano Centrale",
+        "direction": "A",
+        "departuretime": 1643123880000,
+        "arrivaltime": 1643129640000,
+        "minprice": 36.9,
+        "optionaltext": null,
+        "duration": "01:36",
+        "changesno": 0,
+        "bookable": true,
+        "saleable": true,
+        "trainlist": [
+            {
+                "trainidentifier": "FRECCIAROSSA 8820",
+                "trainacronym": "FR",
+                "traintype": "F",
+                "pricetype": "D"
+            }
+        ],
+        "onlycustom": false,
+        "extraInfo": [],
+        "showSeat": true,
+        "specialOffer": null,
+        "transportMeasureList": [],
+        "originalPrice": 36.9
+    },
+    {
+        "idsolution": "c645d5337871e6a1193f79a74bb9da87i3",
+        "origin": "Bologna Centrale",
+        "destination": "Milano Centrale",
+        "direction": "A",
+        "departuretime": 1643124960000,
+        "arrivaltime": 1643129400000,
+        "minprice": 36.9,
+        "optionaltext": null,
+        "duration": "01:14",
+        "changesno": 0,
+        "bookable": true,
+        "saleable": true,
+        "trainlist": [
+            {
+                "trainidentifier": "FRECCIAROSSA 9540",
+                "trainacronym": "FR",
+                "traintype": "F",
+                "pricetype": "D"
+            }
+        ],
+        "onlycustom": false,
+        "extraInfo": [],
+        "showSeat": true,
+        "specialOffer": null,
+        "transportMeasureList": [],
+        "originalPrice": 36.9
+    },
+    {
+        "idsolution": "c645d5337871e6a1193f79a74bb9da87i4",
+        "origin": "Bologna Centrale",
+        "destination": "Milano Centrale",
+        "direction": "A",
+        "departuretime": 1643126160000,
+        "arrivaltime": 1643130000000,
+        "minprice": 36.9,
+        "optionaltext": null,
+        "duration": "01:04",
+        "changesno": 0,
+        "bookable": true,
+        "saleable": true,
+        "trainlist": [
+            {
+                "trainidentifier": "FRECCIAROSSA 9642",
+                "trainacronym": "FR",
+                "traintype": "F",
+                "pricetype": "D"
+            }
+        ],
+        "onlycustom": false,
+        "extraInfo": [],
+        "showSeat": true,
+        "specialOffer": null,
+        "transportMeasureList": [],
+        "originalPrice": 36.9
+    }
+]
